@@ -4,9 +4,8 @@ name: CMake on multiple platforms
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    tags:
+      - "v*.*.*"
 
 jobs:
   build:
@@ -40,9 +39,9 @@ jobs:
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: |
         cmake --build build/${{ matrix.targetplatform }} --config ${{ matrix.build_type }}
-        copy build/${{ matrix.targetplatform }}/${{ matrix.build_type }}/im-select-mspy.exe im-select-mspy.${{matrix.build_type}}.exe
+        copy build/${{ matrix.targetplatform }}/${{ matrix.build_type }}/im-select-mspy.exe im-select-mspy.${{matrix.targetplatform}}.exe
 
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
-          files : im-select-mspy.${{matrix.build_type}}.exe
+          files : im-select-mspy.${{matrix.targetplatform}}.exe
