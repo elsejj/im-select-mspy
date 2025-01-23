@@ -35,8 +35,11 @@ struct CliOptions
   wstring taskbar_name;
   // -i=
   wstring ime_capture_re;
+  // -v
+  bool verbose;
 
   wregex ime_capture;
+
 };
 
 // ime button in taskbar
@@ -127,6 +130,7 @@ ImeButton get_ime_button(const CliOptions & options) {
 
   pAutomation->CreatePropertyCondition(UIA_ControlTypePropertyId, _variant_t(UIA_ButtonControlTypeId), &pCondition);
 
+  if (options.verbose)  wcout << L"found taskbar: " << options.taskbar_name << endl;
   IUIAutomationElementArrayPtr arrButtons;
   pTaskBar->FindAll(TreeScope_Descendants, pCondition, &arrButtons);
 
@@ -138,10 +142,13 @@ ImeButton get_ime_button(const CliOptions & options) {
     arrButtons->GetElement(i, &pButton);
     auto name = get_element_name(pButton);
 
+    if (options.verbose)  wcout << L"Is '" << name << L"' ime button?  ";
     wsmatch match;
     if (regex_search(name, match, options.ime_capture)) {
+      if (options.verbose)  wcout << L"YES" << endl;
       return { match[1], pButton };
     }
+    if (options.verbose)  wcout << L"NO" << endl;
   }
   return { L"", nullptr };
 }
@@ -153,6 +160,7 @@ CliOptions chinese_options()
   options.taskbar_name = L"任务栏";
   options.ime_capture_re = L"托盘输入指示器\\s+(\\w+)"; //\\s+(\\S+)\\s*.+";
   options.switch_keys = L"shift";
+  options.verbose = false;
   return options;
 }
 
@@ -183,6 +191,10 @@ CliOptions parse_options(int argc, wchar_t * argv[])
           options.ime_capture_re = value;
         }
       }
+      if (wcscmp(arg, L"-v") == 0)
+      {
+        options.verbose = true;
+      }
     }
     else
     {
@@ -198,9 +210,9 @@ CliOptions parse_options(int argc, wchar_t * argv[])
 
 void print_options(const CliOptions & options)
 {
-  wcout << L"taskbar name: " << options.taskbar_name << endl;
-  wcout << L"ime capture: " << options.ime_capture_re << endl;
-  wcout << L"switch keys: " << options.switch_keys << endl;
+  wcout << L"taskbar name(-t): " << options.taskbar_name << endl;
+  wcout << L"ime capture(-i): " << options.ime_capture_re << endl;
+  wcout << L"switch keys(-k): " << options.switch_keys << endl;
   wcout << L"mode: " << options.mode << endl;
 }
 
@@ -236,11 +248,15 @@ int wmain(int argc, wchar_t * argv[])
   catch (_com_error&  e)
   {
     wcout << L"get ime button failed: " << e.ErrorMessage() << endl;
+    wcout << L"maybe the taskbar name (-t) is not correct" << endl;
+    print_options(options);
     return 1;
   }
 
   if (!ime_button.pElement)
   {
+    wcout << L"ime button not found, maybe the ime_capture (-i) can't match the ime button name  " << endl;
+    print_options(options);
     return 1;
   }
 
