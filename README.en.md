@@ -11,10 +11,10 @@ Although this project is mainly designed for Microsoft Pinyin input method, it c
 
 The current configuration is as follows:
 
--t=任务栏: the tool uses this parameter to find the taskbar. For non-Simplified Chinese systems, it can be set to the name of the corresponding language.
--i=托盘输入指示器\s+(\w+): this regular expression is used to obtain the current input method status. Other input methods can try to modify this regular expression to adapt.
--k=shift: this parameter sets the shortcut key for switching input methods. Other input methods or using other shortcut keys can try to modify this parameter to adapt, such as -k=ctrl+space. \
-If special keys that are difficult to input are required for switching input methods, you can specify the hexadecimal representation of [Virtual Keys codes], such as -k=ctrl+0x7C which represents ctrl+F13.
+- `-t=任务栏`: the tool uses this parameter to find the taskbar. For non-Simplified Chinese systems, it can be set to the name of the corresponding language.
+- `-i=托盘输入指示器\s+(\w+):` this regular expression is used to obtain the current input method status. Other input methods can try to modify this regular expression to adapt.
+- `-k=shift`: this parameter sets the shortcut key for switching input methods. Other input methods or using other shortcut keys can try to modify this parameter to adapt, such as -k=ctrl+space. \
+  If special keys that are difficult to input are required for switching input methods, you can specify the hexadecimal representation of [Virtual Keys codes], such as -k=ctrl+0x7C which represents ctrl+F13.
 
 However, if the taskbar auto-hide function is enabled, the program may fail to obtain the tray input indicator button.
 In this case, one solution is to enable the Microsoft Pinyin *Input Method Toolbar* (note that this is not the Windows system's *Desktop Language Bar*). 
