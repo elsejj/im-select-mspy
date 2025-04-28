@@ -87,6 +87,15 @@ SHORT vk_from_text(const wstring & text) {
   if (text == L"space") {
     return VK_SPACE;
   }
+  // Check for hexadecimal format (0xhh)
+  // such that 0x1F means VK_MODECHANGE
+  if (text.length() == 4 && text.substr(0, 2) == L"0x") {
+    try {
+      return static_cast<SHORT>(std::stoi(text.substr(2), nullptr, 16));
+    }
+    catch (...) {
+    }
+  }
   return 0;
 }
 
